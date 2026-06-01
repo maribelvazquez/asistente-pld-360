@@ -5,752 +5,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Asistente PLD 360</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
-
-  :root {
-    --violet: #A663CC;
-    --violet-dark: #8B44B8;
-    --violet-light: #C084DC;
-    --coral: #FF8361;
-    --green: #87D895;
-    --lavanda: #EDE0F4;
-    --lavanda-dark: #D4C0E8;
-    --white: #FFFFFF;
-    --gray-100: #F8F4FC;
-    --gray-200: #EDE0F4;
-    --gray-500: #9B7BB8;
-    --gray-700: #5A3A72;
-    --gray-900: #2D1A42;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--gray-900);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ── BACKGROUND ── */
-  .bg-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(166,99,204,0.35) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(255,131,97,0.2) 0%, transparent 55%),
-      radial-gradient(ellipse 50% 70% at 60% 30%, rgba(135,216,149,0.1) 0%, transparent 50%),
-      linear-gradient(160deg, #2D1A42 0%, #1A0F28 50%, #0F0A18 100%);
-  }
-
-  .bg-grid {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background-image:
-      linear-gradient(rgba(166,99,204,0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(166,99,204,0.06) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  /* ── SCREENS ── */
-  .screen {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-
-  .screen.hidden { display: none; }
-
-  /* ── LOGIN ── */
-  .login-card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(166,99,204,0.3);
-    border-radius: 24px;
-    padding: 3.5rem 3rem;
-    width: 100%;
-    max-width: 440px;
-    backdrop-filter: blur(20px);
-    box-shadow:
-      0 0 0 1px rgba(166,99,204,0.1),
-      0 40px 80px rgba(0,0,0,0.5),
-      inset 0 1px 0 rgba(255,255,255,0.08);
-    animation: fadeUp 0.6s ease both;
-  }
-
-  .login-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(166,99,204,0.15);
-    border: 1px solid rgba(166,99,204,0.3);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: var(--violet-light);
-    text-transform: uppercase;
-    margin-bottom: 2rem;
-  }
-
-  .login-badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 8px var(--green);
-  }
-
-  .login-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.6rem;
-    font-weight: 900;
-    color: var(--white);
-    line-height: 1.1;
-    margin-bottom: 0.5rem;
-  }
-
-  .login-title span { color: var(--violet-light); }
-
-  .login-sub {
-    font-size: 0.9rem;
-    color: var(--gray-500);
-    margin-bottom: 2.5rem;
-    line-height: 1.6;
-  }
-
-  .input-group { margin-bottom: 1.5rem; }
-
-  .input-label {
-    display: block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gray-500);
-    margin-bottom: 8px;
-  }
-
-  .input-field {
-    width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(166,99,204,0.2);
-    border-radius: 12px;
-    padding: 14px 18px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    color: var(--white);
-    outline: none;
-    transition: all 0.2s;
-    letter-spacing: 0.15em;
-  }
-
-  .input-field::placeholder { color: rgba(255,255,255,0.2); letter-spacing: 0.05em; }
-
-  .input-field:focus {
-    border-color: var(--violet);
-    background: rgba(166,99,204,0.08);
-    box-shadow: 0 0 0 3px rgba(166,99,204,0.15);
-  }
-
-  .error-msg {
-    display: none;
-    font-size: 0.82rem;
-    color: var(--coral);
-    margin-top: 8px;
-    padding: 8px 12px;
-    background: rgba(255,131,97,0.1);
-    border-radius: 8px;
-    border-left: 3px solid var(--coral);
-  }
-
-  .error-msg.show { display: block; }
-
-  .btn-primary {
-    width: 100%;
-    background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%);
-    border: none;
-    border-radius: 12px;
-    padding: 15px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--white);
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.03em;
-    box-shadow: 0 4px 20px rgba(166,99,204,0.4);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 30px rgba(166,99,204,0.5);
-    background: linear-gradient(135deg, var(--violet-light) 0%, var(--violet) 100%);
-  }
-
-  .btn-primary:active { transform: translateY(0); }
-
-  .login-footer {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(166,99,204,0.1);
-    text-align: center;
-    font-size: 0.8rem;
-    color: var(--gray-500);
-  }
-
-  /* ── APP ── */
-  .app-wrapper {
-    width: 100%;
-    max-width: 860px;
-    animation: fadeUp 0.5s ease both;
-  }
-
-  /* Header */
-  .app-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-
-  .app-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo-icon {
-    width: 44px; height: 44px;
-    background: linear-gradient(135deg, var(--violet), var(--coral));
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3rem;
-    box-shadow: 0 4px 16px rgba(166,99,204,0.4);
-  }
-
-  .logo-text {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--white);
-  }
-
-  .logo-text span { color: var(--violet-light); }
-
-  .app-tagline {
-    font-size: 0.75rem;
-    color: var(--gray-500);
-    font-weight: 400;
-  }
-
-  .btn-logout {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(166,99,204,0.2);
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.8rem;
-    color: var(--gray-500);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-logout:hover {
-    background: rgba(255,131,97,0.1);
-    border-color: var(--coral);
-    color: var(--coral);
-  }
-
-  /* Steps indicator */
-  .steps-bar {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 2rem;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(166,99,204,0.15);
-    border-radius: 16px;
-    padding: 6px;
-  }
-
-  .step-pill {
-    flex: 1;
-    text-align: center;
-    padding: 8px 4px;
-    border-radius: 10px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--gray-500);
-    transition: all 0.3s;
-    cursor: default;
-  }
-
-  .step-pill.active {
-    background: linear-gradient(135deg, var(--violet), var(--violet-dark));
-    color: var(--white);
-    box-shadow: 0 2px 10px rgba(166,99,204,0.4);
-  }
-
-  .step-pill.done {
-    background: rgba(135,216,149,0.15);
-    color: var(--green);
-  }
-
-  /* Card */
-  .card {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(166,99,204,0.2);
-    border-radius: 20px;
-    padding: 2rem;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
-    margin-bottom: 1rem;
-  }
-
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .card-title-badge {
-    width: 28px; height: 28px;
-    background: linear-gradient(135deg, var(--violet), var(--violet-dark));
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: white;
-    flex-shrink: 0;
-  }
-
-  /* Selectors row */
-  .selectors-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .select-group { display: flex; flex-direction: column; gap: 8px; }
-
-  .select-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gray-500);
-  }
-
-  .select-field {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(166,99,204,0.2);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.9rem;
-    color: var(--white);
-    outline: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239B7BB8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 36px;
-  }
-
-  .select-field option { background: #2D1A42; color: var(--white); }
-
-  .select-field:focus {
-    border-color: var(--violet);
-    box-shadow: 0 0 0 3px rgba(166,99,204,0.15);
-  }
-
-  /* Marco normativo pill */
-  .marco-pill {
-    display: none;
-    margin-top: 1rem;
-    padding: 12px 16px;
-    background: rgba(135,216,149,0.08);
-    border: 1px solid rgba(135,216,149,0.25);
-    border-radius: 12px;
-    font-size: 0.82rem;
-    color: var(--green);
-    line-height: 1.5;
-  }
-
-  .marco-pill.show { display: block; }
-  .marco-pill strong { color: #A8E6B0; }
-
-  /* Plataforma instruccion */
-  .plataforma-pill {
-    display: none;
-    margin-top: 1rem;
-    padding: 12px 16px;
-    background: rgba(255,131,97,0.08);
-    border: 1px solid rgba(255,131,97,0.25);
-    border-radius: 12px;
-    font-size: 0.82rem;
-    color: #FFB39A;
-    line-height: 1.5;
-  }
-
-  .plataforma-pill.show { display: block; }
-  .plataforma-pill strong { color: var(--coral); }
-
-  /* Método 360 fields */
-  .metodo-grid {
-    display: grid;
-    gap: 1rem;
-  }
-
-  .metodo-field {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 12px;
-    align-items: start;
-  }
-
-  .metodo-label-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    padding-top: 2px;
-  }
-
-  .metodo-step-num {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--violet-light);
-    opacity: 0.7;
-  }
-
-  .metodo-step-name {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--white);
-  }
-
-  .metodo-step-hint {
-    font-size: 0.72rem;
-    color: var(--gray-500);
-    line-height: 1.4;
-  }
-
-  .metodo-input {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(166,99,204,0.2);
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    color: var(--white);
-    outline: none;
-    transition: all 0.2s;
-    resize: vertical;
-    min-height: 60px;
-    line-height: 1.5;
-  }
-
-  .metodo-input::placeholder { color: rgba(255,255,255,0.18); font-size: 0.82rem; }
-
-  .metodo-input:focus {
-    border-color: var(--violet);
-    background: rgba(166,99,204,0.06);
-    box-shadow: 0 0 0 3px rgba(166,99,204,0.12);
-  }
-
-  /* Generate button */
-  .btn-generate {
-    width: 100%;
-    background: linear-gradient(135deg, var(--violet) 0%, var(--coral) 100%);
-    border: none;
-    border-radius: 14px;
-    padding: 18px;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--white);
-    cursor: pointer;
-    transition: all 0.3s;
-    letter-spacing: 0.02em;
-    box-shadow: 0 4px 24px rgba(166,99,204,0.35);
-    margin-top: 1rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-generate::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .btn-generate:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 35px rgba(166,99,204,0.5);
-  }
-
-  .btn-generate:hover::before { opacity: 1; }
-  .btn-generate:active { transform: translateY(0); }
-
-  /* Output */
-  .output-card {
-    display: none;
-    animation: fadeUp 0.4s ease both;
-  }
-
-  .output-card.show { display: block; }
-
-  .output-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .output-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .output-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 10px var(--green);
-    animation: pulse 2s infinite;
-  }
-
-  .btn-copy {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(135,216,149,0.12);
-    border: 1px solid rgba(135,216,149,0.3);
-    border-radius: 10px;
-    padding: 9px 18px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--green);
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .btn-copy:hover {
-    background: rgba(135,216,149,0.2);
-    box-shadow: 0 0 20px rgba(135,216,149,0.2);
-  }
-
-  .btn-copy.copied {
-    background: rgba(135,216,149,0.25);
-    color: #A8E6B0;
-  }
-
-  .output-box {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(166,99,204,0.15);
-    border-radius: 14px;
-    padding: 1.5rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    color: rgba(255,255,255,0.85);
-    line-height: 1.8;
-    white-space: pre-wrap;
-    word-break: break-word;
-    max-height: 480px;
-    overflow-y: auto;
-  }
-
-  .output-box::-webkit-scrollbar { width: 4px; }
-  .output-box::-webkit-scrollbar-track { background: transparent; }
-  .output-box::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 2px; }
-
-  /* Highlight variables */
-  .output-box .var-highlight {
-    background: rgba(255,131,97,0.15);
-    border: 1px solid rgba(255,131,97,0.3);
-    border-radius: 4px;
-    padding: 1px 4px;
-    color: var(--coral);
-    font-weight: 500;
-  }
-
-  .output-box .step-label {
-    color: var(--violet-light);
-    font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
-
-  /* Reset btn */
-  .btn-reset {
-    width: 100%;
-    background: transparent;
-    border: 1px solid rgba(166,99,204,0.2);
-    border-radius: 12px;
-    padding: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    color: var(--gray-500);
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 0.75rem;
-  }
-
-  .btn-reset:hover {
-    border-color: var(--violet);
-    color: var(--violet-light);
-    background: rgba(166,99,204,0.05);
-  }
-
-  /* Footer */
-  .app-footer {
-    text-align: center;
-    padding: 1.5rem 0 0.5rem;
-    font-size: 0.75rem;
-    color: rgba(255,255,255,0.2);
-  }
-
-  .app-footer span { color: var(--violet-light); opacity: 0.6; }
-
-  /* Animations */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
-
-  /* Responsive */
-  @media (max-width: 600px) {
-    .selectors-row { grid-template-columns: 1fr; }
-    .metodo-field { grid-template-columns: 1fr; }
-    .login-card { padding: 2.5rem 1.75rem; }
-    .card { padding: 1.5rem; }
-    .login-title { font-size: 2rem; }
-    .steps-bar { flex-wrap: wrap; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{--violet:#A663CC;--violet-dark:#8B44B8;--violet-light:#C084DC;--coral:#FF8361;--green:#87D895;--lavanda:#EDE0F4;--white:#FFFFFF;--gray-500:#9B7BB8;--gray-900:#2D1A42}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--gray-900);min-height:100vh;overflow-x:hidden}
+.bg-layer{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(166,99,204,0.35) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 80% 80%,rgba(255,131,97,0.2) 0%,transparent 55%),linear-gradient(160deg,#2D1A42 0%,#1A0F28 50%,#0F0A18 100%)}
+.bg-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(166,99,204,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(166,99,204,0.06) 1px,transparent 1px);background-size:40px 40px}
+.screen{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+.screen.hidden{display:none}
+/* LOGIN */
+.login-card{background:rgba(255,255,255,0.04);border:1px solid rgba(166,99,204,0.3);border-radius:24px;padding:3.5rem 3rem;width:100%;max-width:440px;backdrop-filter:blur(20px);box-shadow:0 40px 80px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.08);animation:fadeUp 0.6s ease both}
+.login-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(166,99,204,0.15);border:1px solid rgba(166,99,204,0.3);border-radius:100px;padding:6px 16px;font-size:11px;font-weight:600;letter-spacing:0.1em;color:var(--violet-light);text-transform:uppercase;margin-bottom:2rem}
+.login-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green)}
+.login-title{font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:900;color:var(--white);line-height:1.1;margin-bottom:0.5rem}
+.login-title span{color:var(--violet-light)}
+.login-sub{font-size:0.9rem;color:var(--gray-500);margin-bottom:2.5rem;line-height:1.6}
+.input-label{display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px}
+.input-field{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(166,99,204,0.2);border-radius:12px;padding:14px 18px;font-family:'DM Sans',sans-serif;font-size:1rem;color:var(--white);outline:none;transition:all 0.2s;letter-spacing:0.15em;margin-bottom:1.5rem}
+.input-field::placeholder{color:rgba(255,255,255,0.2);letter-spacing:0.05em}
+.input-field:focus{border-color:var(--violet);background:rgba(166,99,204,0.08);box-shadow:0 0 0 3px rgba(166,99,204,0.15)}
+.error-msg{display:none;font-size:0.82rem;color:var(--coral);margin-bottom:1rem;padding:8px 12px;background:rgba(255,131,97,0.1);border-radius:8px;border-left:3px solid var(--coral)}
+.error-msg.show{display:block}
+.btn-primary{width:100%;background:linear-gradient(135deg,var(--violet) 0%,var(--violet-dark) 100%);border:none;border-radius:12px;padding:15px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;color:var(--white);cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(166,99,204,0.4)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(166,99,204,0.5)}
+.login-footer{margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(166,99,204,0.1);text-align:center;font-size:0.8rem;color:var(--gray-500)}
+.login-footer span{color:var(--violet-light)}
+/* APP */
+.app-wrapper{width:100%;max-width:900px;animation:fadeUp 0.5s ease both}
+.app-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.app-logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:44px;height:44px;background:linear-gradient(135deg,var(--violet),var(--coral));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 4px 16px rgba(166,99,204,0.4)}
+.logo-text{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--white)}
+.logo-text span{color:var(--violet-light)}
+.app-tagline{font-size:0.75rem;color:var(--gray-500)}
+.btn-logout{background:rgba(255,255,255,0.05);border:1px solid rgba(166,99,204,0.2);border-radius:8px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:0.8rem;color:var(--gray-500);cursor:pointer;transition:all 0.2s}
+.btn-logout:hover{background:rgba(255,131,97,0.1);border-color:var(--coral);color:var(--coral)}
+/* CARDS */
+.card{background:rgba(255,255,255,0.04);border:1px solid rgba(166,99,204,0.2);border-radius:20px;padding:1.75rem;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.06);margin-bottom:1rem}
+.card-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--white);margin-bottom:1.25rem;display:flex;align-items:center;gap:10px}
+.card-num{width:26px;height:26px;background:linear-gradient(135deg,var(--violet),var(--violet-dark));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;color:white;flex-shrink:0}
+/* SELECTS */
+.selectors-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.select-group{display:flex;flex-direction:column;gap:8px}
+.select-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray-500)}
+.select-field{background:rgba(255,255,255,0.05);border:1px solid rgba(166,99,204,0.2);border-radius:12px;padding:12px 36px 12px 16px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--white);outline:none;cursor:pointer;transition:all 0.2s;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239B7BB8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.select-field option{background:#2D1A42;color:var(--white)}
+.select-field optgroup{color:var(--violet-light);font-weight:700}
+.select-field:focus{border-color:var(--violet);box-shadow:0 0 0 3px rgba(166,99,204,0.15)}
+/* PILLS */
+.pill{display:none;margin-top:1rem;padding:12px 16px;border-radius:12px;font-size:0.82rem;line-height:1.6}
+.pill.show{display:block}
+.pill-green{background:rgba(135,216,149,0.08);border:1px solid rgba(135,216,149,0.25);color:#A8E6B0}
+.pill-coral{background:rgba(255,131,97,0.08);border:1px solid rgba(255,131,97,0.25);color:#FFB39A}
+/* PROMPT */
+.prompt-card{display:none;animation:fadeUp 0.4s ease both}
+.prompt-card.show{display:block}
+.prompt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.prompt-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 2s infinite}
+.btn-copy{display:flex;align-items:center;gap:8px;background:rgba(135,216,149,0.12);border:1px solid rgba(135,216,149,0.3);border-radius:10px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;color:var(--green);cursor:pointer;transition:all 0.2s}
+.btn-copy:hover{background:rgba(135,216,149,0.2)}
+.btn-copy.copied{background:rgba(135,216,149,0.25)}
+.prompt-box{background:rgba(0,0,0,0.3);border:1px solid rgba(166,99,204,0.15);border-radius:14px;padding:1.5rem;font-family:'DM Sans',sans-serif;font-size:0.84rem;color:rgba(255,255,255,0.85);line-height:1.85;white-space:pre-wrap;word-break:break-word;max-height:500px;overflow-y:auto}
+.prompt-box::-webkit-scrollbar{width:4px}
+.prompt-box::-webkit-scrollbar-thumb{background:var(--violet);border-radius:2px}
+.step-lbl{color:var(--violet-light);font-weight:700;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase}
+.var-lbl{background:rgba(255,131,97,0.15);border:1px solid rgba(255,131,97,0.3);border-radius:4px;padding:1px 5px;color:var(--coral);font-weight:500}
+.sep-lbl{color:rgba(166,99,204,0.4)}
+/* VARS */
+.vars-section{display:none;margin-top:1.25rem}
+.vars-section.show{display:block}
+.vars-title{font-size:0.8rem;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem}
+.vars-grid{display:grid;gap:0.75rem}
+.var-row{display:grid;grid-template-columns:200px 1fr;gap:10px;align-items:center}
+.var-name{font-size:0.82rem;color:var(--coral);font-weight:500}
+.var-input{background:rgba(255,255,255,0.05);border:1px solid rgba(255,131,97,0.25);border-radius:8px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:0.83rem;color:var(--white);outline:none;transition:all 0.2s}
+.var-input:focus{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,131,97,0.12)}
+.var-input::placeholder{color:rgba(255,255,255,0.2)}
+.btn-apply{background:linear-gradient(135deg,rgba(255,131,97,0.3),rgba(255,131,97,0.15));border:1px solid rgba(255,131,97,0.4);border-radius:10px;padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;color:#FFB39A;cursor:pointer;transition:all 0.2s;margin-top:1rem}
+.btn-apply:hover{background:linear-gradient(135deg,rgba(255,131,97,0.4),rgba(255,131,97,0.25))}
+.btn-reset{width:100%;background:transparent;border:1px solid rgba(166,99,204,0.2);border-radius:12px;padding:12px;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--gray-500);cursor:pointer;transition:all 0.2s;margin-top:0.75rem}
+.btn-reset:hover{border-color:var(--violet);color:var(--violet-light)}
+.app-footer{text-align:center;padding:1.5rem 0 0.5rem;font-size:0.75rem;color:rgba(255,255,255,0.2)}
+.app-footer span{color:var(--violet-light);opacity:0.6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+@media(max-width:600px){.selectors-row{grid-template-columns:1fr}.var-row{grid-template-columns:1fr}.login-card{padding:2.5rem 1.75rem}.login-title{font-size:2rem}}
 </style>
 </head>
 <body>
-
 <div class="bg-layer"></div>
 <div class="bg-grid"></div>
 
-<!-- ══ LOGIN ══ -->
+<!-- LOGIN -->
 <div class="screen" id="loginScreen">
   <div class="login-card">
     <div class="login-badge">360educa · Curso PLD/FT</div>
     <h1 class="login-title">Asistente<br><span>PLD 360</span></h1>
-    <p class="login-sub">Constructor de prompts con el Método 360.<br>Acceso exclusivo para alumnos del curso.</p>
-
-    <div class="input-group">
-      <label class="input-label" for="passwordInput">Contraseña de acceso</label>
-      <input
-        class="input-field"
-        type="password"
-        id="passwordInput"
-        placeholder="Ingresa tu contraseña"
-        autocomplete="off"
-      />
-      <div class="error-msg" id="errorMsg">Contraseña incorrecta. Revisa tus materiales del curso.</div>
-    </div>
-
-    <button class="btn-primary" onclick="checkPassword()">Entrar al Asistente</button>
-
-    <div class="login-footer">
-      ¿No tienes acceso? Inscríbete en <span>360educa.com</span>
-    </div>
+    <p class="login-sub">Biblioteca de prompts con el Método 360.<br>Acceso exclusivo para alumnos del curso.</p>
+    <label class="input-label" for="pwInput">Contraseña de acceso</label>
+    <input class="input-field" type="password" id="pwInput" placeholder="Ingresa tu contraseña" autocomplete="off"/>
+    <div class="error-msg" id="errMsg">Contraseña incorrecta. Revisa tus materiales del curso.</div>
+    <button class="btn-primary" onclick="checkPw()">Entrar al Asistente</button>
+    <div class="login-footer">¿No tienes acceso? Inscríbete en <span>360educa.com</span></div>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- APP -->
 <div class="screen hidden" id="appScreen">
   <div class="app-wrapper">
-
-    <!-- Header -->
     <div class="app-header">
       <div class="app-logo">
         <div class="logo-icon">⚖️</div>
         <div>
           <div class="logo-text">Asistente <span>PLD 360</span></div>
-          <div class="app-tagline">Constructor de Prompts · Método 360</div>
+          <div class="app-tagline">Biblioteca de Prompts · Método 360</div>
         </div>
       </div>
       <button class="btn-logout" onclick="logout()">Cerrar sesión</button>
     </div>
 
-    <!-- Steps bar -->
-    <div class="steps-bar">
-      <div class="step-pill active" id="pill1">1 · Entidad</div>
-      <div class="step-pill" id="pill2">2 · Plataforma</div>
-      <div class="step-pill" id="pill3">3 · Rol</div>
-      <div class="step-pill" id="pill4">4 · Contexto</div>
-      <div class="step-pill" id="pill5">5 · Tarea</div>
-      <div class="step-pill" id="pill6">6 · Datos</div>
-      <div class="step-pill" id="pill7">7 · Formato</div>
-      <div class="step-pill" id="pill8">8 · Límites</div>
-    </div>
-
-    <!-- Card 1: Selectores -->
+    <!-- PASO 1 -->
     <div class="card">
-      <div class="card-title">
-        <div class="card-title-badge">01</div>
-        Configura tu contexto
-      </div>
-
+      <div class="card-title"><div class="card-num">01</div>Configura tu contexto</div>
       <div class="selectors-row">
         <div class="select-group">
           <label class="select-label">Tipo de entidad</label>
-          <select class="select-field" id="entidadSelect" onchange="updateMarco()">
+          <select class="select-field" id="entidadSel" onchange="onEntidad()">
             <option value="">Selecciona tu entidad</option>
             <option value="banca">Banca múltiple</option>
             <option value="sofom">SOFOM</option>
             <option value="av">Actividad vulnerable</option>
           </select>
         </div>
-
         <div class="select-group">
           <label class="select-label">Plataforma de IA</label>
-          <select class="select-field" id="plataformaSelect" onchange="updatePlataforma()">
+          <select class="select-field" id="platSel" onchange="onPlat()">
             <option value="">Selecciona tu plataforma</option>
             <option value="gemini">Gemini</option>
             <option value="copilot">Copilot</option>
@@ -759,357 +149,209 @@
           </select>
         </div>
       </div>
-
-      <!-- Marco normativo -->
-      <div class="marco-pill" id="marcoPill"></div>
-
-      <!-- Instrucción plataforma -->
-      <div class="plataforma-pill" id="plataformaPill"></div>
+      <div class="pill pill-green" id="marcoPill"></div>
+      <div class="pill pill-coral" id="platPill"></div>
     </div>
 
-    <!-- Card 2: Método 360 -->
+    <!-- PASO 2 -->
     <div class="card">
-      <div class="card-title">
-        <div class="card-title-badge">02</div>
-        Método 360 · Los 6 pasos de tu prompt
+      <div class="card-title"><div class="card-num">02</div>¿Qué necesitas hacer?</div>
+      <div class="select-group">
+        <label class="select-label">Selecciona la tarea</label>
+        <select class="select-field" id="tareaSel" onchange="onTarea()">
+          <option value="">— Primero selecciona tu entidad —</option>
+        </select>
       </div>
-
-      <div class="metodo-grid">
-
-        <div class="metodo-field">
-          <div class="metodo-label-wrap">
-            <span class="metodo-step-num">Paso 1</span>
-            <span class="metodo-step-name">ROL</span>
-            <span class="metodo-step-hint">¿Qué experto quieres que sea la IA?</span>
-          </div>
-          <textarea class="metodo-input" id="f_rol" rows="2"
-            placeholder="Ej: Actúa como un especialista en PLD/FT con experiencia en banca múltiple mexicana..."></textarea>
-        </div>
-
-        <div class="metodo-field">
-          <div class="metodo-label-wrap">
-            <span class="metodo-step-num">Paso 2</span>
-            <span class="metodo-step-name">CONTEXTO</span>
-            <span class="metodo-step-hint">Situación específica de tu institución</span>
-          </div>
-          <textarea class="metodo-input" id="f_contexto" rows="2"
-            placeholder="Ej: Mi institución es {{tipo_de_entidad}}, con {{número}} clientes y operaciones en {{zona_geográfica}}..."></textarea>
-        </div>
-
-        <div class="metodo-field">
-          <div class="metodo-label-wrap">
-            <span class="metodo-step-num">Paso 3</span>
-            <span class="metodo-step-name">TAREA</span>
-            <span class="metodo-step-hint">¿Qué necesitas exactamente?</span>
-          </div>
-          <textarea class="metodo-input" id="f_tarea" rows="2"
-            placeholder="Ej: Redacta una política de {{proceso}} que cumpla con las obligaciones del artículo {{artículo}}..."></textarea>
-        </div>
-
-        <div class="metodo-field">
-          <div class="metodo-label-wrap">
-            <span class="metodo-step-num">Paso 4</span>
-            <span class="metodo-step-name">DATOS</span>
-            <span class="metodo-step-hint">Información que debe considerar la IA</span>
-          </div>
-          <textarea class="metodo-input" id="f_datos" rows="2"
-            placeholder="Ej: Considera que {{dato_relevante}}, el período de reporte es {{período}}, y el umbral aplicable es {{umbral}}..."></textarea>
-        </div>
-
-        <div class="metodo-field">
-          <div class="metodo-label-wrap">
-            <span class="metodo-step-num">Paso 5</span>
-            <span class="metodo-step-name">FORMATO</span>
-            <span class="metodo-step-hint">Cómo quieres recibir el resultado</span>
-          </div>
-          <textarea class="metodo-input" id="f_formato" rows="2"
-            placeholder="Ej: Responde en formato de tabla con columnas: {{columna_1}}, {{columna_2}}. Extensión máxima: {{páginas}} páginas..."></textarea>
-        </div>
-
-        <div class="metodo-field">
-          <div class="metodo-label-wrap">
-            <span class="metodo-step-num">Paso 6</span>
-            <span class="metodo-step-name">LÍMITES</span>
-            <span class="metodo-step-hint">Qué debe evitar la IA</span>
-          </div>
-          <textarea class="metodo-input" id="f_limites" rows="2"
-            placeholder="Ej: No mezcles con LFPIORPI. No inventes artículos. Si no tienes certeza normativa, indícalo explícitamente..."></textarea>
-        </div>
-
-      </div>
-
-      <button class="btn-generate" onclick="generatePrompt()">
-        ✦ Construir mi Prompt con el Método 360
-      </button>
+      <div class="pill pill-green" id="tareaDesc" style="margin-top:1rem"></div>
     </div>
 
-    <!-- Output -->
-    <div class="card output-card" id="outputCard">
-      <div class="output-header">
-        <div class="output-title">
-          <div class="output-dot"></div>
-          Prompt listo para copiar
-        </div>
-        <button class="btn-copy" id="copyBtn" onclick="copyPrompt()">
-          📋 Copiar prompt
-        </button>
+    <!-- PASO 3: Prompt -->
+    <div class="card prompt-card" id="promptCard">
+      <div class="prompt-header">
+        <div class="prompt-title"><div class="live-dot"></div>Prompt listo · Método 360</div>
+        <button class="btn-copy" id="copyBtn" onclick="copyPrompt()">📋 Copiar prompt</button>
       </div>
-      <div class="output-box" id="outputBox"></div>
-      <button class="btn-reset" onclick="resetForm()">↩ Construir otro prompt</button>
+      <div class="prompt-box" id="promptBox"></div>
+      <div class="vars-section" id="varsSection">
+        <div class="vars-title">✦ Personaliza tus variables antes de copiar</div>
+        <div class="vars-grid" id="varsGrid"></div>
+        <button class="btn-apply" onclick="applyVars()">Aplicar variables al prompt</button>
+      </div>
+      <button class="btn-reset" onclick="resetApp()">↩ Seleccionar otra tarea</button>
     </div>
 
-    <div class="app-footer">
-      Asistente PLD 360 · <span>360educa</span> · GMC360 Consultoría<br>
-      Uso exclusivo para alumnos del curso. Versión light.
-    </div>
-
+    <div class="app-footer">Asistente PLD 360 · <span>360educa</span> · GMC360 Consultoría · Versión light</div>
   </div>
 </div>
 
 <script>
-  // ── DATA ──
-  const MARCOS = {
-    banca: {
-      label: '🏦 Banca múltiple',
-      texto: '<strong>Marco aplicable:</strong> LIC art. 115 + Disposiciones de carácter general (DCG). Supervisor: CNBV/UIF. <strong>No aplica:</strong> LFPIORPI.',
-      contextoBase: 'Mi institución es una institución de crédito (banca múltiple) supervisada por la CNBV. El marco normativo aplicable en materia de PLD/FT es el artículo 115 de la LIC y las Disposiciones de carácter general aplicables a las instituciones de crédito. No aplica LFPIORPI.'
-    },
-    sofom: {
-      label: '🏢 SOFOM',
-      texto: '<strong>Marco aplicable:</strong> LIC art. 115 (habilitante) → LGOAAC arts. 87-D y 95 Bis. Supervisor: CNBV/UIF. <strong>No aplica:</strong> LFPIORPI.',
-      contextoBase: 'Mi institución es una Sociedad Financiera de Objeto Múltiple (SOFOM) supervisada por la CNBV en materia de PLD/FT. El marco normativo aplicable es el artículo 115 de la LIC en relación con los artículos 87-D y 95 Bis de la LGOAAC. No aplica LFPIORPI.'
-    },
-    av: {
-      label: '⚠️ Actividad vulnerable',
-      texto: '<strong>Marco aplicable:</strong> LFPIORPI arts. 17 y 18. Supervisor: UIF vía SAT. <strong>No aplica:</strong> LIC ni LGOAAC.',
-      contextoBase: 'Mi actividad es una actividad vulnerable conforme al artículo 17 de la LFPIORPI. Las obligaciones aplicables están en los artículos 17 y 18 de la LFPIORPI. Reporto ante la UIF a través del SAT. No aplica LIC ni LGOAAC.'
-    }
-  };
+const MARCOS={banca:{pill:'<strong>Marco aplicable:</strong> LIC art. 115 + Disposiciones de carácter general (DCG). Supervisor: CNBV/UIF. <strong>No aplica:</strong> LFPIORPI.',instruccion:'Carga en tu proyecto: LIC art. 115 + DCG bancos. Así la IA trabaja sobre texto normativo real, no sobre memoria.'},sofom:{pill:'<strong>Marco aplicable:</strong> LIC art. 115 (habilitante) → LGOAAC arts. 87-D y 95 Bis. Supervisor: CNBV/UIF. <strong>No aplica:</strong> LFPIORPI.',instruccion:'Carga en tu proyecto: LIC art. 115 + LGOAAC arts. 87-D y 95 Bis. Así la IA trabaja sobre texto normativo real, no sobre memoria.'},av:{pill:'<strong>Marco aplicable:</strong> LFPIORPI arts. 17 y 18. Supervisor: UIF vía SAT. <strong>No aplica:</strong> LIC ni LGOAAC.',instruccion:'Carga en tu proyecto: LFPIORPI arts. 17 y 18. Así la IA trabaja sobre texto normativo real, no sobre memoria.'}};
+const PLATAFORMAS={gemini:'Sin proyecto: pega marco normativo y prompt juntos en el mismo mensaje. Con Gem: carga el marco en las instrucciones del Gem.',copilot:'Pega marco normativo y prompt juntos en el chat. <strong>Verifica con IT</strong> que el uso esté autorizado en tu institución.',claude:'Crea un Proyecto. Pega el marco en las instrucciones del proyecto. Usa el prompt en cada conversación dentro del proyecto.',chatgpt:'Crea un Proyecto. Pega el marco en las instrucciones del proyecto. Usa el prompt en cada chat dentro del proyecto.'};
 
-  const PLATAFORMAS = {
-    gemini: {
-      label: '🔵 Gemini',
-      texto: '<strong>Instrucción de montaje:</strong> Sin proyecto: pega el marco normativo y el prompt juntos en el mismo mensaje. Con Gem personalizado: carga el marco en las instrucciones del Gem y usa el prompt en cada conversación.'
-    },
-    copilot: {
-      label: '🟦 Copilot',
-      texto: '<strong>Instrucción de montaje:</strong> Pega el marco normativo y el prompt juntos en el chat. <strong>Importante:</strong> Verifica con tu área de IT que el uso de Copilot esté autorizado por tu institución antes de ingresar información sensible.'
-    },
-    claude: {
-      label: '🟠 Claude',
-      texto: '<strong>Instrucción de montaje:</strong> Crea un Proyecto en Claude. Pega el marco normativo en las instrucciones del proyecto. Usa el prompt en cada conversación dentro del proyecto. El marco quedará activo en todas tus sesiones.'
-    },
-    chatgpt: {
-      label: '🟢 ChatGPT',
-      texto: '<strong>Instrucción de montaje:</strong> Crea un Proyecto en ChatGPT. Pega el marco normativo en las instrucciones del proyecto. Usa el prompt en cada chat dentro del proyecto. El marco quedará activo en todas tus sesiones.'
-    }
-  };
+const PROMPTS=[
+{id:'B-01',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Validación de coherencia metodológica de la EBR',desc:'Audita la matriz de pesos de tu EBR e identifica inconsistencias internas entre indicadores, sumas y jerarquías.',vars:[],prompt:`▸ ROL\nAuditor metodológico de Enfoque Basado en Riesgo, con criterio para identificar inconsistencias internas en modelos de ponderación de indicadores y elementos de riesgo.\n\n▸ CONTEXTO\nMarco regulatorio: Disposiciones CNBV, 21ª-2 fracción II. El objetivo de la revisión es verificar coherencia interna del modelo de pesos, no proponer pesos nuevos.\n\n▸ TAREA\nAuditar la matriz de pesos suministrada y producir reporte estructurado de hallazgos en cuatro tipos: suma de pesos, jerarquía de discriminación, comportamiento en casos extremos e inconsistencia entre subsegmentos.\n\n▸ DATOS\nTabla de pesos por indicador y por elemento de riesgo, anonimizada. Tres a cinco casos extremos representativos, con datos anonimizados.\n\n▸ FORMATO\nReporte con cuatro secciones (una por tipo de error), cada una con hallazgo, evidencia interna del modelo y recomendación.\n\n▸ LÍMITES\nNo proponer pesos nuevos: la propuesta es decisión metodológica del equipo. No usar datos no anonimizados. No sustituir la validación del Oficial de Cumplimiento.`},
+{id:'B-02',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Validación cruzada EBR contra sistemas',desc:'Detecta inconsistencias entre tu EBR documental y la parametrización del sistema automatizado de monitoreo.',vars:[],prompt:`▸ ROL\nValidador metodológico cruzado entre Enfoque Basado en Riesgo documental y parametrización del sistema automatizado de monitoreo, bajo Disposiciones CNBV.\n\n▸ CONTEXTO\nMarco regulatorio: 21ª-3 fracción I (no debe haber inconsistencias entre EBR y sistemas). Tres dimensiones de cruce: coherencia de indicadores, coherencia de pesos y coherencia de clasificación.\n\n▸ TAREA\nProducir el reporte de inconsistencias entre la EBR documental y la parametrización del sistema, con clasificación por dimensión y juicio de criticidad (alta, media, baja) para cada hallazgo.\n\n▸ DATOS\nLista de indicadores de la EBR vigente, anonimizada. Lista de criterios de alerta del sistema, anonimizada. Modelo de pesos de la EBR. Calibración de scoring del sistema.\n\n▸ FORMATO\nReporte con tres secciones (una por dimensión), cada hallazgo con descripción, evidencia interna y juicio de criticidad. Cuadro resumen al final.\n\n▸ LÍMITES\nNo proponer remediación en este prompt. No usar datos transaccionales de Clientes.`},
+{id:'B-03',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Clasificación de Grado de Riesgo del Cliente',desc:'Obtén una propuesta de clasificación Alto/Medio/Bajo para un cliente aplicando los indicadores de tu EBR.',vars:['{{segmento}}','{{productos}}','{{canales}}','{{presencia}}'],prompt:`▸ ROL\nEspecialista en clasificación de Grado de Riesgo PLD/FT bajo Disposiciones CNBV, con criterio para aplicar la metodología de Enfoque Basado en Riesgo de la entidad.\n\n▸ CONTEXTO\nMarco regulatorio: LIC y Disposiciones CNBV, Capítulo III, 25ª Bis y 28ª. Perfil de la entidad: segmento {{segmento}}, productos relevantes {{productos}}, canales {{canales}}, presencia geográfica {{presencia}}.\n\n▸ TAREA\nProducir la clasificación propuesta para el Cliente (Alto, Medio o Bajo) aplicando los indicadores de la EBR vigente. Documentar para cada indicador: peso asignado, valor observado, contribución al Grado de Riesgo. Cerrar con la clasificación integral y nota breve con los tres elementos que más pesaron.\n\n▸ DATOS\nElementos del Cliente en expediente, anonimizados: segmento, perfil transaccional por rangos, geografía, productos contratados, beneficiario controlador (categoría, no nombre), elementos de contexto agravantes (PEP, jurisdicción, lista oficial). EBR vigente con indicadores, pesos y umbrales.\n\n▸ FORMATO\nTabla con indicadores aplicables, peso, valor observado y contribución. Clasificación propuesta y nota breve con los tres factores principales. Lenguaje técnico-regulatorio en español de México.\n\n▸ LÍMITES\nNo clasificar sin que la EBR lo sostenga. No incluir nombre, identificación oficial ni montos exactos. La clasificación es insumo para revisión del Oficial de Cumplimiento; la decisión final permanece en la frontera humana.`},
+{id:'B-04',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Generador de caso de estudio para capacitación',desc:'Diseña un caso de estudio diferenciado por nivel jerárquico, anclado en tu EBR y en tipologías documentadas.',vars:['{{nivel_jerarquico}}','{{tema_regulatorio}}'],prompt:`▸ ROL\nDiseñador instruccional de capacitación PLD/FT bajo Disposiciones CNBV, con criterio para construir casos de estudio diferenciados por nivel jerárquico anclados en la operación real de la entidad.\n\n▸ CONTEXTO\nMarco regulatorio: Capítulo IX, 49ª fracción I. Última EBR aprobada por el Comité. Nivel jerárquico objetivo: {{nivel_jerarquico}}. Tema regulatorio del caso: {{tema_regulatorio}}.\n\n▸ TAREA\nProducir el caso de estudio en cinco bloques: a) contexto operativo con perfil del Cliente anonimizado; b) operación o conjunto de operaciones que detonan el caso; c) decisión que el participante debe tomar con dos o tres opciones; d) elementos de juicio como lista de chequeo; e) evaluación al cierre con dos preguntas de comprensión y una de aplicación.\n\n▸ DATOS\nResumen de hallazgos de la EBR pertinentes al caso. Tipología regulatoria de referencia (GAFI, Grupo Egmont o UIF). Política institucional aplicable.\n\n▸ FORMATO\nCaso estructurado con los cinco bloques. Lenguaje técnico-regulatorio calibrado al nivel jerárquico.\n\n▸ LÍMITES\nNo incluir nombres del Cliente ni montos exactos. No introducir tipologías inventadas: solo fuente regulatoria primaria. No proponer respuesta única correcta.`},
+{id:'B-05',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Simulador de entrevista de debida diligencia reforzada',desc:'Practica entrevistas DDR con un cliente compuesto que introduce ambigüedades y evalúa tus preguntas al cierre.',vars:['{{perfil_cliente}}','{{tipologia_referencia}}'],prompt:`▸ ROL\nSimulador de Cliente compuesto para entrenamiento en entrevistas de debida diligencia reforzada conforme al Capítulo III de las Disposiciones CNBV. Interpreta al Cliente con coherencia interna, introduce ambigüedades y evalúa al cierre.\n\n▸ CONTEXTO\nMarco regulatorio: 7ª, Capítulo III, 25ª Bis, 28ª y 68ª. Perfil del Cliente compuesto: {{perfil_cliente}}. Tipología que el caso ilustra: {{tipologia_referencia}}.\n\n▸ TAREA\nConducir la simulación en cuatro fases: a) presentación inicial del Cliente; b) respuesta a preguntas con ambigüedades naturales; c) reacción ante preguntas difíciles con plausibilidad; d) evaluación al cierre: preguntas formuladas, preguntas omitidas con cita a disposición, calidad de documentación y recomendación pedagógica.\n\n▸ DATOS\nPerfil del Cliente compuesto. Tipología de referencia. Lista de preguntas regulatoriamente esperadas en DDR conforme al Capítulo III. Política institucional de Conocimiento del Cliente.\n\n▸ FORMATO\nDiálogo fase por fase (Entrevistador / Cliente compuesto). Al cierre, evaluación en tres bloques: preguntas formuladas, preguntas omitidas con cita, recomendación pedagógica.\n\n▸ LÍMITES\nNo revelar el perfil compuesto durante la fase b). No fijar guion único de respuesta correcta. No emitir dictamen sobre aceptación del Cliente: esa decisión requiere aprobación directiva conforme a la 26ª o 27ª.`},
+{id:'B-07',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Generador de boletín regulatorio interno',desc:'Redacta un boletín de difusión interna sobre cambio normativo o tipología nueva, con evaluación de comprensión al cierre.',vars:['{{fuente_referencia}}','{{fecha_publicacion}}','{{tema_boletin}}','{{tipo_difusion}}'],prompt:`▸ ROL\nEspecialista en comunicación regulatoria interna del área de Cumplimiento PLD/FT, con criterio para redactar boletín dirigido al personal operativo y al mando medio.\n\n▸ CONTEXTO\nMarco regulatorio: Capítulo IX, 49ª fracción II. Fuente del cambio o tipología: {{fuente_referencia}}. Fecha de publicación: {{fecha_publicacion}}. Tema específico: {{tema_boletin}}. Tipo de difusión: {{tipo_difusion}}.\n\n▸ TAREA\nProducir el boletín en cinco bloques: a) síntesis del cambio con cita a fuente primaria; b) qué cambia para la entidad en términos operativos; c) qué cambia para el personal en comportamiento; d) ejemplo aplicado con perfil anonimizado; e) evaluación de comprensión al cierre con tres preguntas cortas y una de aplicación.\n\n▸ DATOS\nTexto de la modificación normativa o tipología en versión primaria. EBR vigente para anclar la aplicación. Política institucional aplicable.\n\n▸ FORMATO\nBoletín de una a dos páginas. Lenguaje técnico-regulatorio en español de México accesible. Cita a fuente primaria con fecha y referencia exacta.\n\n▸ LÍMITES\nNo interpretar la disposición más allá del texto primario. No incluir nombres ni montos exactos. No sustituir la difusión por el boletín solo.`},
+{id:'B-08',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Resumen para el Comité de Comunicación y Control',desc:'Estructura el paquete técnico que el CCC necesita leer antes de sesión, con opciones claras para deliberar.',vars:['{{tipo_asunto}}','{{identificador_paquete}}'],prompt:`▸ ROL\nEstructurador de paquetes para el Comité de Comunicación y Control, con criterio para preparar material que el cuerpo colegiado lee antes de sesión.\n\n▸ CONTEXTO\nMarco regulatorio: Capítulo VIII, 43ª y sus fracciones aplicables al asunto en sesión. Tipo de asunto: {{tipo_asunto}}. Identificador del paquete: {{identificador_paquete}}.\n\n▸ TAREA\nProducir el resumen para Comité en cuatro bloques: a) síntesis del asunto con antecedente y motivo; b) hechos relevantes como bloques de evidencia sin lenguaje argumentativo; c) opciones que el Comité puede deliberar con efecto institucional de cada una; d) elementos pendientes de verificación.\n\n▸ DATOS\nInsumo técnico del área. Política institucional aplicable. Antecedentes previos y decisiones documentadas en actas del Comité.\n\n▸ FORMATO\nCuatro bloques. Extensión máxima cinco páginas. Cuadros sintéticos donde corresponda. Lenguaje regulatorio-operativo sin sobrecarga técnica.\n\n▸ LÍMITES\nNo formular dictamen sobre las opciones: el dictamen es función del Comité conforme a la 43ª. No recomendar entre las opciones. No incluir nombres del Cliente ni montos exactos.`},
+{id:'B-10',fase:'FASE 1 · Victorias seguras',entidades:['banca','sofom'],titulo:'Kit de crisis regulatoria',desc:'Prepara la cronología trazable, la lectura regulatoria y la posición técnica defendible ante un escenario de crisis.',vars:['{{tipo_escenario}}','{{identificador_caso}}','{{plazo_respuesta}}'],prompt:`▸ ROL\nEstructurador de paquete técnico-regulatorio del área de Cumplimiento PLD/FT en escenario de crisis institucional, con criterio para preparar cronología, lectura regulatoria y posición técnica defendible.\n\n▸ CONTEXTO\nTipo de escenario: {{tipo_escenario}} (visita CNBV sorpresiva, evento reputacional mediático, requerimiento urgente de autoridad). Identificador del caso: {{identificador_caso}}. Plazo de respuesta: {{plazo_respuesta}}.\n\n▸ TAREA\nProducir el paquete en cuatro bloques: a) cronología regulatoriamente trazable con fechas, eventos y decisiones; b) lectura del caso contra las Disposiciones aplicables con cita a disposición y fracción; c) posición técnica defendible del área de Cumplimiento; d) elementos sensibles que la entidad debe cuidar en comunicación externa.\n\n▸ DATOS\nExpediente del caso. Cronología institucional registrada. Decisiones previas del Comité. Política institucional aplicable. Antecedentes de comunicación con la autoridad.\n\n▸ FORMATO\nCuatro bloques. Cronología en tabla. Lectura regulatoria con cita a disposición. Posición técnica en uno a dos párrafos. Elementos sensibles en lista con razón regulatoria.\n\n▸ LÍMITES\nNo redactar mensaje externo: esa es función de Vocería y Jurídico. No proponer descargo legal. No omitir elementos sensibles aunque sean incómodos.`},
+{id:'B-12',fase:'FASE 2 · Análisis asistido',entidades:['banca','sofom'],titulo:'Diagnóstico de ruido del sistema de monitoreo',desc:'Identifica los escenarios donde tu sistema genera alertas que se cierran sin profundización (ruido confirmado).',vars:['{{trimestre}}','{{volumen_alertas}}','{{tasa_cierre_sin_profundizacion}}'],prompt:`▸ ROL\nAnalista metodológico de sistemas automatizados de monitoreo PLD/FT bajo Disposiciones CNBV, con criterio para distinguir alertas que aportan capacidad analítica de las que constituyen ruido por miscalibración.\n\n▸ CONTEXTO\nMarco regulatorio: LIC y Disposiciones CNBV, Capítulo X, 51ª fracciones III a V Bis. Ventana de análisis: {{trimestre}}. Volumen de alertas: {{volumen_alertas}}. Tasa de cierre sin profundización: {{tasa_cierre_sin_profundizacion}}.\n\n▸ TAREA\nProducir el diagnóstico del ruido en cuatro dimensiones: por fracción de la 38ª que disparó la alerta, por escenario operativo, por segmento de Cliente y por canal. Para cada dimensión, identificar criterios donde la tasa de cierre sin profundización es significativamente más alta que el promedio. Marcar como ruido confirmado los criterios que combinan alta tasa de cierre sin profundización con baja tasa de levantamiento a hipótesis.\n\n▸ DATOS\nConjunto de alertas de la ventana, anonimizado: identificador interno, fracción disparadora, escenario, segmento, canal, decisión del analista. Catálogo de escenarios operativos vigentes con umbrales actuales.\n\n▸ FORMATO\nReporte ejecutivo con cuatro secciones. Cada sección con cuadro de hallazgos y juicio de criticidad. Resumen final con lista de escenarios de ruido confirmado ordenados por volumen.\n\n▸ LÍMITES\nNo proponer recalibración en este prompt: el diagnóstico es insumo, no decisión. No usar datos personales identificables ni montos exactos.`},
+{id:'B-14',fase:'FASE 2 · Análisis asistido',entidades:['banca','sofom'],titulo:'Priorización y scoring de alertas',desc:'Asigna un score de criticidad (alta/media/baja) a tu bandeja de alertas combinando fracción disparadora, perfil del cliente y contexto agravante.',vars:['{{numero_alertas}}','{{ventana}}'],prompt:`▸ ROL\nAnalista de priorización de alertas PLD/FT bajo Disposiciones CNBV, con criterio para combinar fracción disparadora, perfil de Cliente y patrón observado en un score consistente.\n\n▸ CONTEXTO\nMarco regulatorio: 38ª (criterios de inusualidad) y 47ª fracción V. Bandeja de alertas: {{numero_alertas}} en la ventana {{ventana}}.\n\n▸ TAREA\nAsignar a cada alerta un score de criticidad en tres niveles (alta, media, baja), combinando: fracción disparadora de la 38ª y peso regulatorio asociado; Grado de Riesgo del Cliente; presencia de elementos de contexto agravantes (PEP, jurisdicción de mayor preocupación, alerta previa). Para cada alerta de criticidad alta, producir nota breve con los elementos que sostienen el score.\n\n▸ DATOS\nConjunto anonimizado de alertas: identificador interno, fracción disparadora, escenario, Grado de Riesgo del Cliente, segmento, elementos de contexto agravantes. EBR vigente con pesos.\n\n▸ FORMATO\nTabla con identificador, score de criticidad y nota breve para los de criticidad alta. Cuadro resumen al final con conteo por nivel de criticidad y por fracción disparadora.\n\n▸ LÍMITES\nNo dictaminar inusualidad: el scoring es priorización, no decisión sobre la naturaleza de la operación. No incluir nombre, identificación oficial ni montos exactos. No proponer cierre de alertas.`},
+{id:'B-15',fase:'FASE 2 · Análisis asistido',entidades:['banca','sofom'],titulo:'Hipótesis de investigación contra tipologías documentadas',desc:'Formula hipótesis encuadrables para una alerta específica comparándola contra el catálogo de tipologías GAFI y UIF.',vars:['{{identificador_alerta}}','{{patron_observado}}'],prompt:`▸ ROL\nAnalista de hipótesis de investigación PLD/FT, con conocimiento del catálogo de tipologías GAFI y UIF y criterio para formular hipótesis encuadrables, no especulativas.\n\n▸ CONTEXTO\nMarco regulatorio: 38ª y 47ª fracción V. Alerta a analizar: {{identificador_alerta}} con patrón resumido en {{patron_observado}}.\n\n▸ TAREA\nProponer entre dos y cuatro hipótesis de investigación que encuadren el patrón. Cada hipótesis con: descripción breve, tipología o tipologías documentadas que la sostienen, elementos de evidencia que la confirmarían, elementos que la descartarían. Marcar como hipótesis principal la que el patrón encuadra con mayor precisión.\n\n▸ DATOS\nResumen anonimizado del patrón: fracción disparadora, escenario operativo, comportamiento transaccional por rangos, segmento del Cliente, elementos de contexto agravantes. Catálogo de tipologías aplicables.\n\n▸ FORMATO\nLista numerada de hipótesis con los cuatro bloques. Conclusión breve con la hipótesis principal y la lógica que la jerarquiza.\n\n▸ LÍMITES\nNo dictaminar: las hipótesis son trabajo analítico, no decisión de Comité. No usar nombres ni datos identificables. No introducir tipologías de marcos no aplicables al perfil de la entidad.`},
+{id:'B-20',fase:'FASE 2 · Análisis asistido',entidades:['banca','sofom'],titulo:'Comparación entre perfil declarado y comportamiento observado',desc:'Contrasta lo que el cliente declaró al abrir su cuenta con su comportamiento transaccional real para identificar brechas.',vars:['{{identificador_cliente}}','{{ventana_analisis}}'],prompt:`▸ ROL\nAnalista de Conocimiento del Cliente bajo Disposiciones CNBV, con criterio para identificar brechas entre el perfil declarado en el expediente y el comportamiento transaccional observado.\n\n▸ CONTEXTO\nMarco regulatorio: 38ª fracción I, Capítulo III. Identificador interno del Cliente: {{identificador_cliente}}. Ventana de análisis: {{ventana_analisis}}.\n\n▸ TAREA\nProducir el análisis de brechas en cuatro bloques: a) perfil declarado reducido a segmento, actividad económica, rango de montos declarados y canales esperados; b) comportamiento observado en la ventana por los mismos ejes; c) tabla de contraste brecha por brecha con magnitud y dirección; d) juicio sobre si las brechas activan criterios de inusualidad conforme a la 38ª, con cita a la fracción específica.\n\n▸ DATOS\nElementos del expediente relevantes al perfil declarado, anonimizados. Comportamiento transaccional de la ventana agregado por rangos: monto, frecuencia, canal, contraparte categorizada.\n\n▸ FORMATO\nCuatro bloques con tablas de contraste. Juicio en el bloque d) referenciado a fracción de la 38ª. Lenguaje técnico-regulatorio.\n\n▸ LÍMITES\nNo incluir nombre, identificación oficial ni montos exactos. No dictaminar inusualidad: el análisis es insumo para el analista, no dictamen del Comité.`},
+{id:'B-33',fase:'FASE 3 · Alta complejidad',entidades:['banca','sofom'],titulo:'Borrador de narrativa de la Operación Inusual',desc:'Redacta el borrador de la narrativa para el reporte de Operación Inusual ante la UIF, con todos los elementos regulatorios requeridos.',vars:['{{identificador_caso}}','{{hipotesis_principal}}'],prompt:`▸ ROL\nRedactor de narrativas de Operaciones Inusuales bajo Disposiciones CNBV y normativa UIF, con criterio para construir el texto que sustenta el reporte ante la autoridad y es defendible en auditoría.\n\n▸ CONTEXTO\nMarco regulatorio: 38ª (criterios de inusualidad), 39ª (plazo de reporte), 47ª fracción V, normativa UIF aplicable al formato de reporte. Identificador interno del caso: {{identificador_caso}}. Hipótesis principal sustentada por el Comité: {{hipotesis_principal}}.\n\n▸ TAREA\nProducir el borrador de narrativa en cuatro bloques: a) descripción del Cliente en categorías regulatorias (segmento, Grado de Riesgo, elementos de contexto agravantes); b) descripción de la operación o conjunto de operaciones con elementos verificables (ventana temporal, canal, rango de montos, frecuencia, contraparte categorizada); c) contraste entre comportamiento observado y perfil declarado con cita a la fracción de la 38ª que activa la inusualidad; d) elementos que fundamentan la decisión del Comité de reportar.\n\n▸ DATOS\nDictamen del Comité con hipótesis principal. Evidencia del expediente, anonimizada. Cronología de alertas y análisis del caso. Tipología asociada.\n\n▸ FORMATO\nCuatro bloques en lenguaje técnico-regulatorio en español de México, directo, sin adjetivos. Citas a disposición y fracción donde corresponda.\n\n▸ LÍMITES\nEste borrador requiere revisión y validación del Oficial de Cumplimiento antes de su transmisión a la UIF: no se envía directamente desde este prompt. No incluir nombre completo ni identificación oficial del Cliente. No introducir elementos que el expediente no sustente.`},
+{id:'B-35',fase:'FASE 3 · Alta complejidad',entidades:['banca','sofom'],titulo:'Validación del Manual de Cumplimiento',desc:'Diagnostica si tu Manual de Cumplimiento cubre los requisitos mínimos de las Disposiciones vigentes, capítulo por capítulo.',vars:['{{version_manual}}','{{fecha_ultima_actualizacion}}'],prompt:`▸ ROL\nValidador del Manual de Cumplimiento PLD/FT bajo Disposiciones CNBV, con criterio para verificar cobertura de requisitos mínimos regulatorios y detectar brechas documentales.\n\n▸ CONTEXTO\nMarco regulatorio: Disposiciones de carácter general, estructura completa. Versión del Manual: {{version_manual}}. Fecha de última actualización: {{fecha_ultima_actualizacion}}.\n\n▸ TAREA\nProducir el diagnóstico en tres bloques: a) cobertura por capítulo de las Disposiciones, verificando que cada obligación tenga sección correspondiente en el Manual; b) brechas identificadas con cita a la disposición y fracción no cubierta y nivel de criticidad (alta: ausencia total; media: cobertura parcial; baja: actualización requerida); c) recomendaciones de remediación ordenadas por criticidad.\n\n▸ DATOS\nTexto íntegro del Manual de Cumplimiento vigente. Disposiciones de carácter general aplicables a la entidad. Resultado de la última EBR si está disponible.\n\n▸ FORMATO\nTres bloques. Tabla de cobertura por capítulo en el bloque a). Lista de brechas con criticidad en el bloque b). Recomendaciones en el bloque c).\n\n▸ LÍMITES\nNo redactar el Manual: el diagnóstico identifica brechas y orienta la remediación. No emitir validación favorable cuando existen brechas de criticidad alta. La aprobación del Manual modificado corresponde al Comité conforme a la 43ª.`},
+{id:'B-36',fase:'FASE 3 · Alta complejidad',entidades:['banca','sofom'],titulo:'Estructuración de respuesta a requerimiento de autoridad',desc:'Prepara la respuesta técnica a un requerimiento de información de la CNBV o la UIF con cronología trazable y posición defendible.',vars:['{{numero_oficio}}','{{fecha_requerimiento}}','{{plazo_respuesta}}','{{autoridad}}'],prompt:`▸ ROL\nEstructurador de respuestas a requerimientos de autoridad en materia PLD/FT, con criterio para preparar documentación técnica trazable y defendible ante CNBV o UIF.\n\n▸ CONTEXTO\nMarco regulatorio: Disposiciones aplicables al requerimiento específico. Autoridad requirente: {{autoridad}}. Número de oficio: {{numero_oficio}}. Fecha del requerimiento: {{fecha_requerimiento}}. Plazo de respuesta: {{plazo_respuesta}}.\n\n▸ TAREA\nProducir el borrador de respuesta en cuatro bloques: a) síntesis del requerimiento con identificación de cada punto solicitado; b) respuesta técnica punto por punto con soporte documental disponible; c) elementos que requieren información adicional de otras áreas con responsable y plazo interno; d) consideraciones que el área Jurídica debe revisar antes del envío.\n\n▸ DATOS\nTexto íntegro del oficio de requerimiento. Inventario de documentación disponible en el área de Cumplimiento. Cronología institucional relevante al requerimiento.\n\n▸ FORMATO\nCuatro bloques. Respuesta punto por punto en tabla para el bloque b). Lista con responsable y plazo en el bloque c). Lenguaje técnico-regulatorio en español de México.\n\n▸ LÍMITES\nEste borrador requiere revisión del área Jurídica y del Oficial antes de su envío a la autoridad. No incluir información que exceda lo solicitado. No comprometer posición legal.`},
+{id:'AV-01',fase:'FASE 1 · Victorias seguras',entidades:['av'],titulo:'Identificación de actividades vulnerables aplicables',desc:'Verifica qué fracciones del artículo 17 de la LFPIORPI aplican a tu actividad y cuáles son tus obligaciones concretas.',vars:['{{descripcion_actividad}}'],prompt:`▸ ROL\nEspecialista en cumplimiento de la LFPIORPI para actividades vulnerables del sector no financiero en México, con criterio para identificar obligaciones del artículo 18 aplicables a cada tipo de actividad del artículo 17.\n\n▸ CONTEXTO\nMarco regulatorio: LFPIORPI arts. 17 y 18. Supervisor: UIF a través del SAT. No aplica LIC ni LGOAAC. Descripción de la actividad: {{descripcion_actividad}}.\n\n▸ TAREA\nProducir el diagnóstico de obligaciones en tres bloques: a) identificación de la fracción o fracciones del artículo 17 que aplican a la actividad descrita; b) obligaciones concretas del artículo 18 que se activan con cita a inciso específico; c) umbrales aplicables y tipo de aviso que genera cada umbral.\n\n▸ DATOS\nDescripción de la actividad tal como se realiza en la práctica. Monto habitual de las operaciones por rango. Tipo de clientes (persona física o moral, nacionales o extranjeros).\n\n▸ FORMATO\nTres bloques con cita a artículo y fracción en cada elemento. Lenguaje técnico-regulatorio en español de México accesible para el responsable de cumplimiento.\n\n▸ LÍMITES\nNo mezclar con marco LIC ni LGOAAC: esta actividad se rige exclusivamente por LFPIORPI. No inventar artículos. La identificación final de obligaciones requiere validación del responsable de cumplimiento.`},
+{id:'AV-02',fase:'FASE 1 · Victorias seguras',entidades:['av'],titulo:'Generador de aviso de actividad vulnerable ante UIF',desc:'Prepara el borrador del aviso de operación con las características que requiere el sistema del SAT/UIF.',vars:['{{fraccion_art17}}','{{monto_operacion}}','{{tipo_cliente}}'],prompt:`▸ ROL\nEspecialista en elaboración de avisos de actividades vulnerables ante la UIF para sujetos obligados bajo la LFPIORPI, con criterio para estructurar la información requerida por el sistema del SAT.\n\n▸ CONTEXTO\nMarco regulatorio: LFPIORPI arts. 17 y 18. Plataforma de reporte: sistema del SAT. Fracción del artículo 17 aplicable: {{fraccion_art17}}. Monto de la operación: {{monto_operacion}}. Tipo de cliente: {{tipo_cliente}}.\n\n▸ TAREA\nProducir el borrador del aviso con los elementos que el sistema SAT/UIF requiere: a) identificación del sujeto obligado; b) identificación del cliente con los datos exigidos por la fracción aplicable; c) descripción de la operación con los elementos verificables; d) verificación de que el monto supera el umbral de aviso de la fracción aplicable.\n\n▸ DATOS\nDatos del cliente disponibles en el expediente, anonimizados. Descripción de la operación. Documentación de soporte disponible. Fecha de la operación.\n\n▸ FORMATO\nEstructura que refleja los campos del sistema SAT/UIF. Lenguaje técnico-regulatorio en español de México directo y sin adjetivos.\n\n▸ LÍMITES\nEste borrador requiere validación del responsable de cumplimiento antes de su transmisión al SAT. No mezclar con marco LIC ni LGOAAC.`}
+];
 
-  let currentPromptText = '';
-
-  // ── LOGIN ──
-  function checkPassword() {
-    const val = document.getElementById('passwordInput').value.trim().toUpperCase();
-    const err = document.getElementById('errorMsg');
-    if (val === 'METODO360') {
-      err.classList.remove('show');
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('appScreen').classList.remove('hidden');
-    } else {
-      err.classList.add('show');
-      document.getElementById('passwordInput').focus();
-    }
-  }
-
-  document.getElementById('passwordInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') checkPassword();
+function buildTareas(entidad){
+  const sel=document.getElementById('tareaSel');
+  sel.innerHTML='<option value="">— Selecciona la tarea —</option>';
+  if(!entidad){sel.innerHTML='<option value="">— Primero selecciona tu entidad —</option>';return}
+  const filtrados=PROMPTS.filter(p=>p.entidades.includes(entidad));
+  const fases=[...new Set(filtrados.map(p=>p.fase))];
+  fases.forEach(fase=>{
+    const grp=document.createElement('optgroup');
+    grp.label=fase;
+    filtrados.filter(p=>p.fase===fase).forEach(p=>{
+      const opt=document.createElement('option');
+      opt.value=p.id;
+      opt.textContent=p.titulo;
+      grp.appendChild(opt);
+    });
+    sel.appendChild(grp);
   });
+}
 
-  function logout() {
-    document.getElementById('appScreen').classList.add('hidden');
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('passwordInput').value = '';
-    resetForm();
-  }
+function checkPw(){
+  const val=document.getElementById('pwInput').value.trim().toUpperCase();
+  if(val==='METODO360'){
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appScreen').classList.remove('hidden');
+    document.getElementById('errMsg').classList.remove('show');
+  }else{document.getElementById('errMsg').classList.add('show')}
+}
 
-  // ── SELECTORS ──
-  function updateMarco() {
-    const val = document.getElementById('entidadSelect').value;
-    const pill = document.getElementById('marcoPill');
-    const contextoField = document.getElementById('f_contexto');
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('pwInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPw()});
+});
 
-    if (val && MARCOS[val]) {
-      pill.innerHTML = MARCOS[val].texto;
-      pill.classList.add('show');
-      if (!contextoField.value.trim()) {
-        contextoField.value = MARCOS[val].contextoBase;
-      }
-    } else {
-      pill.classList.remove('show');
-    }
-    updateStepPills();
-  }
+function logout(){
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('pwInput').value='';
+  resetApp();
+}
 
-  function updatePlataforma() {
-    const val = document.getElementById('plataformaSelect').value;
-    const pill = document.getElementById('plataformaPill');
-    if (val && PLATAFORMAS[val]) {
-      pill.innerHTML = PLATAFORMAS[val].texto;
-      pill.classList.add('show');
-    } else {
-      pill.classList.remove('show');
-    }
-    updateStepPills();
-  }
+function onEntidad(){
+  const val=document.getElementById('entidadSel').value;
+  const pill=document.getElementById('marcoPill');
+  if(val&&MARCOS[val]){pill.innerHTML=MARCOS[val].pill;pill.classList.add('show')}else pill.classList.remove('show');
+  buildTareas(val);
+  document.getElementById('tareaDesc').classList.remove('show');
+  document.getElementById('promptCard').classList.remove('show');
+  onPlat();
+}
 
-  // ── STEP PILLS ──
-  function updateStepPills() {
-    const entidad = document.getElementById('entidadSelect').value;
-    const plataforma = document.getElementById('plataformaSelect').value;
-    const fields = ['f_rol','f_contexto','f_tarea','f_datos','f_formato','f_limites'];
+function onPlat(){
+  const val=document.getElementById('platSel').value;
+  const pill=document.getElementById('platPill');
+  if(val&&PLATAFORMAS[val]){
+    const entidad=document.getElementById('entidadSel').value;
+    const pre=entidad&&MARCOS[entidad]?'<strong>Paso previo:</strong> '+MARCOS[entidad].instruccion+'<br><br>':'';
+    pill.innerHTML=pre+'<strong>Instrucción de montaje:</strong> '+PLATAFORMAS[val];
+    pill.classList.add('show');
+  }else pill.classList.remove('show');
+}
 
-    const pills = document.querySelectorAll('.step-pill');
-    if (entidad) pills[0].classList.add('done');
-    else pills[0].classList.remove('done');
-    if (plataforma) pills[1].classList.add('done');
-    else pills[1].classList.remove('done');
+let promptFinal='';
 
-    fields.forEach((id, i) => {
-      const filled = document.getElementById(id).value.trim().length > 0;
-      if (filled) pills[i+2].classList.add('done');
-      else pills[i+2].classList.remove('done');
+function onTarea(){
+  const id=document.getElementById('tareaSel').value;
+  const desc=document.getElementById('tareaDesc');
+  const card=document.getElementById('promptCard');
+  if(!id){desc.classList.remove('show');card.classList.remove('show');return}
+  const p=PROMPTS.find(x=>x.id===id);
+  if(!p)return;
+  desc.innerHTML='<strong>'+p.titulo+':</strong> '+p.desc;
+  desc.classList.add('show');
+  renderPrompt(p);
+  card.classList.add('show');
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+function buildHeader(p){
+  return '══════════════════════════════════════\nPROMPT · MÉTODO 360 · '+p.id+'\n'+p.titulo.toUpperCase()+'\n══════════════════════════════════════\n\n';
+}
+const FOOTER='\n\n══════════════════════════════════════\nGenerado con Asistente PLD 360 · 360educa\nMétodo 360 © GMC360 Consultoría\n══════════════════════════════════════';
+
+function highlight(txt){
+  return txt.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/══+/g,m=>`<span class="sep-lbl">${m}</span>`)
+    .replace(/▸ ([A-ZÁÉÍÓÚÑ ]+)/g,(_,l)=>`<span class="step-lbl">▸ ${l}</span>`)
+    .replace(/(\{\{[^}]+\}\})/g,'<span class="var-lbl">$1</span>');
+}
+
+function renderPrompt(p){
+  promptFinal=buildHeader(p)+p.prompt+FOOTER;
+  document.getElementById('promptBox').innerHTML=highlight(promptFinal);
+  const sec=document.getElementById('varsSection');
+  const grid=document.getElementById('varsGrid');
+  grid.innerHTML='';
+  document.getElementById('copyBtn').textContent='📋 Copiar prompt';
+  document.getElementById('copyBtn').classList.remove('copied');
+  if(p.vars&&p.vars.length>0){
+    sec.classList.add('show');
+    p.vars.forEach(v=>{
+      const nombre=v.replace(/\{\{|\}\}/g,'');
+      const row=document.createElement('div');
+      row.className='var-row';
+      row.innerHTML=`<span class="var-name">${v}</span><input class="var-input" data-var="${v}" placeholder="${nombre}..." />`;
+      grid.appendChild(row);
     });
-  }
+  }else sec.classList.remove('show');
+}
 
-  document.querySelectorAll('.metodo-input').forEach(el => {
-    el.addEventListener('input', updateStepPills);
+function applyVars(){
+  const id=document.getElementById('tareaSel').value;
+  const p=PROMPTS.find(x=>x.id===id);
+  if(!p)return;
+  let txt=p.prompt;
+  document.querySelectorAll('.var-input').forEach(inp=>{
+    if(inp.value.trim())txt=txt.split(inp.dataset.var).join(inp.value.trim());
   });
+  promptFinal=buildHeader(p)+txt+FOOTER;
+  document.getElementById('promptBox').innerHTML=highlight(promptFinal);
+  document.getElementById('copyBtn').textContent='📋 Copiar prompt';
+  document.getElementById('copyBtn').classList.remove('copied');
+}
 
-  // ── GENERATE ──
-  function generatePrompt() {
-    const entidad = document.getElementById('entidadSelect').value;
-    const plataforma = document.getElementById('plataformaSelect').value;
-    const rol = document.getElementById('f_rol').value.trim();
-    const contexto = document.getElementById('f_contexto').value.trim();
-    const tarea = document.getElementById('f_tarea').value.trim();
-    const datos = document.getElementById('f_datos').value.trim();
-    const formato = document.getElementById('f_formato').value.trim();
-    const limites = document.getElementById('f_limites').value.trim();
+function copyPrompt(){
+  if(!promptFinal)return;
+  navigator.clipboard.writeText(promptFinal).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ ¡Copiado!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='📋 Copiar prompt';btn.classList.remove('copied')},2500);
+  });
+}
 
-    if (!entidad || !plataforma) {
-      alert('Selecciona el tipo de entidad y la plataforma antes de construir el prompt.');
-      return;
-    }
-
-    const marcoTexto = MARCOS[entidad]
-      ? MARCOS[entidad].contextoBase
-      : '';
-
-    const lineas = [];
-
-    // Header del prompt
-    lineas.push(`══════════════════════════════════════`);
-    lineas.push(`PROMPT CONSTRUIDO CON EL MÉTODO 360`);
-    lineas.push(`Entidad: ${MARCOS[entidad]?.label || entidad} · Plataforma: ${PLATAFORMAS[plataforma]?.label || plataforma}`);
-    lineas.push(`══════════════════════════════════════`);
-    lineas.push('');
-
-    // Marco normativo como instrucción inicial
-    lineas.push(`▸ MARCO NORMATIVO DE REFERENCIA`);
-    lineas.push(marcoTexto);
-    lineas.push('');
-
-    // Los 6 pasos
-    if (rol) {
-      lineas.push(`▸ ROL`);
-      lineas.push(rol);
-      lineas.push('');
-    }
-    if (contexto) {
-      lineas.push(`▸ CONTEXTO`);
-      lineas.push(contexto);
-      lineas.push('');
-    }
-    if (tarea) {
-      lineas.push(`▸ TAREA`);
-      lineas.push(tarea);
-      lineas.push('');
-    }
-    if (datos) {
-      lineas.push(`▸ DATOS`);
-      lineas.push(datos);
-      lineas.push('');
-    }
-    if (formato) {
-      lineas.push(`▸ FORMATO`);
-      lineas.push(formato);
-      lineas.push('');
-    }
-    if (limites) {
-      lineas.push(`▸ LÍMITES`);
-      lineas.push(limites);
-      lineas.push('');
-    }
-
-    lineas.push(`══════════════════════════════════════`);
-    lineas.push(`Generado con Asistente PLD 360 · 360educa`);
-    lineas.push(`Método 360 © GMC360 Consultoría`);
-    lineas.push(`══════════════════════════════════════`);
-
-    currentPromptText = lineas.join('\n');
-
-    // Render con highlights
-    const outputBox = document.getElementById('outputBox');
-    let html = currentPromptText
-      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      .replace(/══+/g, match => `<span style="color:rgba(166,99,204,0.4)">${match}</span>`)
-      .replace(/▸ ([A-ZÁÉÍÓÚÑ ]+)/g, (_, label) => `<span class="step-label">▸ ${label}</span>`)
-      .replace(/(\{\{[^}]+\}\})/g, '<span class="var-highlight">$1</span>');
-
-    outputBox.innerHTML = html;
-
-    const outputCard = document.getElementById('outputCard');
-    outputCard.classList.add('show');
-    outputCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    // Reset copy button
-    const copyBtn = document.getElementById('copyBtn');
-    copyBtn.textContent = '📋 Copiar prompt';
-    copyBtn.classList.remove('copied');
-  }
-
-  // ── COPY ──
-  function copyPrompt() {
-    if (!currentPromptText) return;
-    navigator.clipboard.writeText(currentPromptText).then(() => {
-      const btn = document.getElementById('copyBtn');
-      btn.textContent = '✓ ¡Copiado!';
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.textContent = '📋 Copiar prompt';
-        btn.classList.remove('copied');
-      }, 2500);
-    });
-  }
-
-  // ── RESET ──
-  function resetForm() {
-    document.getElementById('entidadSelect').value = '';
-    document.getElementById('plataformaSelect').value = '';
-    ['f_rol','f_contexto','f_tarea','f_datos','f_formato','f_limites'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-    document.getElementById('marcoPill').classList.remove('show');
-    document.getElementById('plataformaPill').classList.remove('show');
-    document.getElementById('outputCard').classList.remove('show');
-    document.querySelectorAll('.step-pill').forEach((p,i) => {
-      p.classList.remove('done');
-      if (i === 0) p.classList.add('active');
-      else p.classList.remove('active');
-    });
-    currentPromptText = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+function resetApp(){
+  document.getElementById('entidadSel').value='';
+  document.getElementById('platSel').value='';
+  document.getElementById('marcoPill').classList.remove('show');
+  document.getElementById('platPill').classList.remove('show');
+  document.getElementById('tareaDesc').classList.remove('show');
+  document.getElementById('promptCard').classList.remove('show');
+  document.getElementById('varsSection').classList.remove('show');
+  buildTareas('');
+  promptFinal='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 </script>
 </body>
 </html>
